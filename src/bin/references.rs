@@ -1,3 +1,10 @@
+// This file must also be compiled with the nightly channel to use this new API.
+#![feature(vec_into_raw_parts)]
+
+use std::mem;
+
+// $ cargo run --bin references
+
 fn main() {
     let i = 100;
     let j: &i32 = &i;
@@ -46,29 +53,27 @@ fn main() {
     );
     println!();
 
-    /*
-     *      Stack      (Addr)
-     *  |------------|
-     *  | i = 100    | (0x04)
-     *  |------------|
-     *  | j = 0x04   | (0x08) <-- 4 bytes above i because i is i32
-     *  |            |   (j is pointing to i)
-     *  |------------|
-     *  | jj = 0x08  | (0x10) <-- 8 bytes above j because the size of a reference is 8 bytes on a x64 system
-     *  |            |   (jj is pointing to j)
-     *  |------------|
-     *  | jjj = 0x10 | (0x18)
-     *  |            |   (jjj is pointing to jj)
-     *  |------------|
-     *  | k = 0x28   | (0x20)
-     *  |            |   (k is pointing to next stack slot)
-     *  |------------|
-     *  |   0x04     | (0x28)
-     *  |            |   (this stack slot points back to i)
-     *  |------------|
-     *
-     * (Stack grows up on Rust playground)
-     */
+    //      Stack      (Addr)
+    //  |------------|
+    //  | i = 100    | (0x04)
+    //  |------------|
+    //  | j = 0x04   | (0x08) <-- 4 bytes above i because i is i32
+    //  |            |   (j is pointing to i)
+    //  |------------|
+    //  | jj = 0x08  | (0x10) <-- 8 bytes above j because the size of a reference is 8 bytes on a x64 system
+    //  |            |   (jj is pointing to j)
+    //  |------------|
+    //  | jjj = 0x10 | (0x18)
+    //  |            |   (jjj is pointing to jj)
+    //  |------------|
+    //  | k = 0x28   | (0x20)
+    //  |            |   (k is pointing to next stack slot)
+    //  |------------|
+    //  |   0x04     | (0x28)
+    //  |            |   (this stack slot points back to i)
+    //  |------------|
+    //
+    // (Stack grows up IN A STACK FRAME)
 
     // println! dereferences to focus on the underlying value (i = 100);
     // So, using {:p} is the Pointer format outputs the memory address stored in the variable.
@@ -86,6 +91,30 @@ fn main() {
     println!("x: {:p}, ptr_y: {:p}", &x, ptr_y);
     print_type_of(&x);
     print_type_of(ptr_y);
+    println!();
+
+    string_playing();
+}
+
+fn string_playing() {
+    let str = String::from("hello, world!");
+    println!("string: {}", str);
+    println!("The stack variable str is at {:p}", &str);
+    println!(
+        "string variable occupies {} bytes on the stack",
+        mem::size_of_val(&str)
+    );
+    let str_ref = &str;
+    println!(
+        "str_ref reference address {:p}. (This should be the stack variable str)",
+        str_ref
+    );
+
+    let ptr = str.into_raw_parts();
+    println!(
+        "And this stack variable references heap memory at {:?} (on stack at {:p})",
+        ptr, &ptr
+    );
 }
 
 fn print_type_of<T>(x: &T) {
