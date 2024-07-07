@@ -13,7 +13,7 @@ mod maths {
 
     pub fn mode_n_lgn(v: &Vec<i32>) -> Option<HashSet<i32>> {
         let mut value_counts: Vec<(i32, i32)> =
-            count_values(v).iter().map(|(k, v)| (**k, *v)).collect();
+            count_values(v).iter().map(|(&&k, &v)| (k, v)).collect();
         value_counts.sort_by(|a, b| b.1.cmp(&a.1));
 
         let most_frequent_item = value_counts.first();
@@ -30,14 +30,14 @@ mod maths {
 
     pub fn mode_n(v: &Vec<i32>) -> Option<HashSet<i32>> {
         let value_counts = count_values(v);
-        let most_frequent = value_counts.iter().max_by_key(|(_, count)| *count);
+        let most_frequent = value_counts.iter().max_by_key(|(_, &count)| count);
 
         match most_frequent {
             Some((_, most_frequent_count)) => Some(HashSet::from_iter(
                 value_counts
                     .iter()
                     .filter(|(_, count)| most_frequent_count.eq(count))
-                    .map(|(val, _)| **val),
+                    .map(|(&&val, _)| val),
             )),
             _ => None,
         }
