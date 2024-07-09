@@ -42,6 +42,7 @@ fn main() {
     // // println!("p {} now has ownership of s {}", p, s); // This line will not compile.
 }
 
+// Before lifetime elision this would be: fn first_word<'a>(s: &'a str) -> &'a str { ... }
 fn first_word(s: &str) -> &str {
     let mut chars = s.chars();
     let first_space_index: Option<usize> = chars.position(|x| x == ' ');
