@@ -8,6 +8,8 @@ enum List {
     Nil,
 }
 
+// Newtype pattern
+// https://doc.rust-lang.org/book/ch19-04-advanced-types.html
 #[derive(Debug)]
 struct Node<T>(Rc<RefCell<T>>);
 
