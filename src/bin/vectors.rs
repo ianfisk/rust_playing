@@ -86,3 +86,77 @@ fn main() {
         println!();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashSet;
+
+    use super::*;
+
+    #[test]
+    fn mode_n_works_one_mode() {
+        let v = vec![1, -2, 3, 3, 4, -2, 3];
+
+        assert_eq!(maths::mode_n(&v).unwrap(), HashSet::from([3]));
+    }
+
+    #[test]
+    fn mode_n_works_many_modes() {
+        let v = vec![1, 2, 3, 4, 5];
+
+        assert_eq!(
+            maths::mode_n(&v).unwrap(),
+            HashSet::from_iter(v.into_iter())
+        );
+    }
+
+    #[test]
+    fn mode_n_returns_none_with_empty_vector() {
+        assert_eq!(maths::mode_n(&Vec::new()), None);
+    }
+
+    #[test]
+    fn median_works_with_odd_num_elements() {
+        let v = vec![3, 2, 2, 2, 1];
+        let expected = 2.0;
+
+        assert_eq!(maths::median(&v).unwrap(), expected);
+    }
+
+    #[test]
+    fn median_works_with_even_num_elements_same_middle_values() {
+        let v = vec![3, 2, 2, 1];
+        let expected = 2.0;
+
+        assert_eq!(maths::median(&v).unwrap(), expected);
+    }
+
+    #[test]
+    fn median_works_with_even_num_elements_different_middle_values() {
+        let v = vec![4, 3, 2, 1];
+        let expected = 2.5;
+
+        assert_eq!(maths::median(&v).unwrap(), expected);
+    }
+
+    #[test]
+    fn median_works_with_one_element_vector() {
+        let v = vec![1];
+        let expected = 1.0;
+
+        assert_eq!(maths::median(&v).unwrap(), expected);
+    }
+
+    #[test]
+    fn median_works_with_two_element_vector() {
+        let v = vec![1, 10];
+        let expected = 5.5;
+
+        assert_eq!(maths::median(&v).unwrap(), expected);
+    }
+
+    #[test]
+    fn median_returns_none_with_empty_vector() {
+        assert_eq!(maths::median(&Vec::new()), None);
+    }
+}
