@@ -18,6 +18,11 @@ impl<T> Node<T> {
         Node(Rc::new(RefCell::new(i)))
     }
 
+    // Is this the right implementation of clone? On second look, I think it is not because
+    // we are only adding a reference to the inner data wrapped by this Node, but clone()
+    // should return an entire new copy to the caller... I.e., yes we get a new Node wrapper, but
+    // not a new clone of the underlying data. It's find with immutable data like here (with Rc),
+    // but still.
     fn clone(&self) -> Self {
         Node(Rc::clone(&self.0))
     }
